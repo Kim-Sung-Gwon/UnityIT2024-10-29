@@ -8,15 +8,14 @@ public class FollowCam : MonoBehaviour
     private Transform target;
     [SerializeField] private CinemachineVirtualCamera VirtualCam;
     [SerializeField] private CinemachineTransposer transposer;
+    [SerializeField] private Transform Cam;
 
-    float Height = 4.0f;
     float distance = 7.0f;
     float movedamping = 10f;
     float rotdamping = 15f;
-    float targetOffset = 2.0f;
 
     float MaxHeight = 12f;
-    float castOffset = 1.0f;
+    float castOffset = 1.7f;
     float originHeight;
     float heightChangeThreshold = 0.1f;
 
@@ -27,6 +26,7 @@ public class FollowCam : MonoBehaviour
     IEnumerator Start()
     {
         VirtualCam = GameObject.Find("Virtual Camera").GetComponent<CinemachineVirtualCamera>();
+        Cam = GameObject.FindWithTag("MainCamera").GetComponent<Transform>();
 
         MainCam = Camera.main;
         ZoomCam = GameObject.FindWithTag("Player").transform.GetChild(3).GetChild(1).GetComponent<Camera>();
@@ -75,12 +75,21 @@ public class FollowCam : MonoBehaviour
         float targetHeight = originHeight;
         if (Physics.Raycast(VirtualCam.transform.position, castDir, out hit, distance))
         {
+            Debug.DrawLine(VirtualCam.transform.position, hit.point, Color.green);
             if (!hit.collider.CompareTag("Player"))
             {
                 targetHeight = MaxHeight;
             }
+            if (hit.collider.CompareTag("DamageZone") || hit.collider.CompareTag("NecromDamage"))
+            {
+                targetHeight = transposer.m_FollowOffset.y;
+            }
+            if (hit.collider.CompareTag("Enemy") || hit.collider.CompareTag("Necroman"))
+            {
+                targetHeight = transposer.m_FollowOffset.y;
+            }
         }
-        if (Mathf.Abs(transposer.m_FollowOffset.y - targetHeight) > heightChangeThreshold)
+        if (Mathf.Abs(transposer.m_FollowOffset.y - targetHeight) >= heightChangeThreshold)
         {
             transposer.m_FollowOffset.y = Mathf.Lerp(transposer.m_FollowOffset.y,
                 targetHeight, Time.deltaTime * movedamping);

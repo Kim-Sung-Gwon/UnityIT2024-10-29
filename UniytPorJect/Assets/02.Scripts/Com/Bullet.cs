@@ -4,9 +4,11 @@ using UnityEngine;
 
 public class Bullet : MonoBehaviour
 {
-    private Transform tr;
-    private Rigidbody rb;
-    private TrailRenderer Trand;
+    public static Bullet P_bullet;
+
+    [SerializeField] private Transform tr;
+    [SerializeField] private Rigidbody rb;
+    [SerializeField] public TrailRenderer Trand;
     public float moveSpeed = 2500f;
     public float Damage = 25f;
 
@@ -15,17 +17,19 @@ public class Bullet : MonoBehaviour
         tr = GetComponent<Transform>();
         rb = GetComponent<Rigidbody>();
         Trand = GetComponent<TrailRenderer>();
-        Invoke("BulletDisable", 3.0f);
-    }
-
-    public void BulletDisable()
-    {
-        this.gameObject.SetActive(false);
     }
 
     private void OnEnable()
     {
         rb.AddForce(transform.forward * moveSpeed);
+        StartCoroutine(BulletDisable());
+    }
+
+    IEnumerator BulletDisable()
+    {
+        yield return new WaitForSeconds(3);
+        this.gameObject.SetActive(false);
+        Trand.Clear();
     }
 
     private void OnCollisionEnter(Collision col)

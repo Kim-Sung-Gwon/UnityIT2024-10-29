@@ -12,7 +12,7 @@ public class FireCtrl : MonoBehaviour
     public State state { get; private set; }
 
     private Transform firePos;
-    private Transform bullet;
+    //private GameObject Bullet;
     private Text bulletText;
     private ParticleSystem muzzFalsh;
     private PlayerSound playersound;
@@ -27,7 +27,7 @@ public class FireCtrl : MonoBehaviour
 
     void Start()
     {
-        bullet = Resources.Load("Bullet").GetComponent<Transform>();
+        //Bullet = Resources.Load("Bullet").GetComponent<GameObject>();
         firePos = GameObject.FindGameObjectWithTag("Player").transform.GetChild(3).GetChild(0).
             GetChild(1).GetChild(0).GetChild(0);
 
@@ -64,13 +64,13 @@ public class FireCtrl : MonoBehaviour
             return;
         }
         var bullet = ObjectPoolingManager.poolingManager.GetBulletPool();
-        if (bullet != null)
+        if (bullet != null && !bullet.activeInHierarchy)
         {
             bullet.transform.position = firePos.position;
             bullet.transform.rotation = firePos.rotation;
             bullet.SetActive(true);
             muzzFalsh.Play();
-            //playersound.FireSound();
+            playersound.FireSound();
             Invoke("MuzzFalshFire", 0.1f);
         }
         --CurBullet;
@@ -90,7 +90,7 @@ public class FireCtrl : MonoBehaviour
     {
         state = State.Reload;
         isReload = true;
-        //playersound.ReloadSound();
+        playersound.ReloadSound();
         GetComponent<PlayerAnimator>().ReloadAnimation();
         yield return new WaitForSeconds(playersound.reloadClip.length + 0.3f);
         int bulletRemain = NowBullet - CurBullet;

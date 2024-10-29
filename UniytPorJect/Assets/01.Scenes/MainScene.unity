@@ -45215,7 +45215,7 @@ MonoBehaviour:
   m_StreamingVersion: 20170927
   m_Priority: 10
   m_StandbyUpdate: 2
-  m_LookAt: {fileID: 1887229130}
+  m_LookAt: {fileID: 0}
   m_Follow: {fileID: 1887229130}
   m_Lens:
     FieldOfView: 60.000004
@@ -45245,7 +45245,7 @@ Transform:
   m_GameObject: {fileID: 439955134}
   serializedVersion: 2
   m_LocalRotation: {x: -0.0000000063010654, y: 0.9819564, z: -0.18910752, w: -0.000000032718805}
-  m_LocalPosition: {x: 14.31, y: 3.972, z: 26.088}
+  m_LocalPosition: {x: 14.31, y: 3.722, z: 25.588}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children:
@@ -54081,7 +54081,7 @@ Transform:
   m_GameObject: {fileID: 963194225}
   serializedVersion: 2
   m_LocalRotation: {x: -0.0000000063010654, y: 0.9819564, z: -0.18910754, w: -0.000000032718802}
-  m_LocalPosition: {x: 14.31, y: 3.972, z: 26.088}
+  m_LocalPosition: {x: 14.31, y: 3.722, z: 25.588}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -54094,7 +54094,7 @@ AudioSource:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 963194225}
-  m_Enabled: 0
+  m_Enabled: 1
   serializedVersion: 4
   OutputAudioMixerGroup: {fileID: 0}
   m_audioClip: {fileID: 8300000, guid: f3a8f746374e27c45b43a5e8c8723715, type: 3}
@@ -54197,6 +54197,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   VirtualCam: {fileID: 0}
   transposer: {fileID: 0}
+  Cam: {fileID: 0}
   MainCam: {fileID: 0}
   ZoomCam: {fileID: 0}
   zoomCam: 1
@@ -54207,7 +54208,7 @@ AudioListener:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 963194225}
-  m_Enabled: 0
+  m_Enabled: 1
 --- !u!114 &963194233
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -65434,10 +65435,10 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   m_BindingMode: 1
-  m_FollowOffset: {x: 0, y: 4, z: -5}
-  m_XDamping: 1
-  m_YDamping: 1
-  m_ZDamping: 1
+  m_FollowOffset: {x: 0, y: 3.75, z: -4.5}
+  m_XDamping: 0
+  m_YDamping: 0
+  m_ZDamping: 0
   m_AngularDampingMode: 0
   m_PitchDamping: 0
   m_YawDamping: 0
@@ -65466,7 +65467,7 @@ MonoBehaviour:
   m_DeadZoneWidth: 0
   m_DeadZoneHeight: 0
   m_SoftZoneWidth: 0
-  m_SoftZoneHeight: 0
+  m_SoftZoneHeight: 0.559
   m_BiasX: 0
   m_BiasY: 0
   m_CenterOnActivate: 1
@@ -70671,6 +70672,7 @@ GameObject:
   - component: {fileID: 1911597486}
   - component: {fileID: 1910615526}
   - component: {fileID: 1901302988}
+  - component: {fileID: 1911597487}
   m_Layer: 7
   m_Name: door_1_left
   m_TagString: Untagged
@@ -70728,6 +70730,7 @@ GameObject:
   - component: {fileID: 1911646180}
   - component: {fileID: 1910924442}
   - component: {fileID: 1901307986}
+  - component: {fileID: 1911646181}
   m_Layer: 7
   m_Name: door_1_right
   m_TagString: Untagged
@@ -70939,6 +70942,27 @@ MeshFilter:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1908456022}
   m_Mesh: {fileID: 4300000, guid: 2107a071ee618844a887d2f12ada9fd3, type: 3}
+--- !u!65 &1911597487
+BoxCollider:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1908456022}
+  m_Material: {fileID: 0}
+  m_IncludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_ExcludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_LayerOverridePriority: 0
+  m_IsTrigger: 0
+  m_ProvidesContacts: 0
+  m_Enabled: 1
+  serializedVersion: 3
+  m_Size: {x: 1.349047, y: 3.8586197, z: 0.14652938}
+  m_Center: {x: -0.7254761, y: 1.9999998, z: 4.1238548e-14}
 --- !u!33 &1911646180
 MeshFilter:
   m_ObjectHideFlags: 0
@@ -70947,6 +70971,27 @@ MeshFilter:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1908654886}
   m_Mesh: {fileID: 4300000, guid: b34895a5cbeae0246af9c017f7df4b1b, type: 3}
+--- !u!65 &1911646181
+BoxCollider:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1908654886}
+  m_Material: {fileID: 0}
+  m_IncludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_ExcludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_LayerOverridePriority: 0
+  m_IsTrigger: 0
+  m_ProvidesContacts: 0
+  m_Enabled: 1
+  serializedVersion: 3
+  m_Size: {x: 1.6227983, y: 3.8586197, z: 0.14652938}
+  m_Center: {x: 0.8620844, y: 1.9999998, z: 0.0000076293945}
 --- !u!33 &1911654706
 MeshFilter:
   m_ObjectHideFlags: 0

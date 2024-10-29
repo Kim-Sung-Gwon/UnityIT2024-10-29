@@ -29,7 +29,7 @@ public class PlayerDamage : MonoBehaviour
     {
         if (other.gameObject.CompareTag("DamageZone"))
         {
-            //playerSound.HitSound();
+            playerSound.HitSound();
             CurHp -= 5;
             CurHpImage();
             if (CurHp <= 0)
@@ -38,7 +38,7 @@ public class PlayerDamage : MonoBehaviour
 
         if (other.gameObject.CompareTag("NecromDamage"))
         {
-            //playerSound.HitSound();
+            playerSound.HitSound();
             CurHp -= 15;
             CurHpImage();
             if (CurHp <= 0)
@@ -59,7 +59,7 @@ public class PlayerDamage : MonoBehaviour
     public void PlayerDie()
     {
         cc.enabled = false;
-        //playerSound.DieSound();
+        playerSound.DieSound();
         playerAnimator.DieAnimation();
         StartCoroutine(LodGameOverUi());
     }
