@@ -1,5 +1,4 @@
 using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
 using Cinemachine;
 
@@ -12,15 +11,15 @@ public class FollowCam : MonoBehaviour
     private CinemachineTransposer transposer;
 
     float Height;
-    float Distance = 7f;
-    float movedamping = 15f;
-    float rotdamping = 15f;
-    float targetOffset = 2.0f;
+    const float Distance = 7f;
+    const float movedamping = 15f;
+    const float rotdamping = 15f;
+    const float targetOffset = 2.0f;
+    const float maxHeight = 12f;
+    const float castOffset = 1.0f;
+    const float heightChangeThreshold = 0.1f;
 
-    float maxHeight = 12f;
-    float castOffset = 1.0f;
     float originHeight;
-    float heightChangeThreshold = 0.1f;
 
     public Camera MainCam;
     public Camera ZoomCam;
@@ -28,11 +27,11 @@ public class FollowCam : MonoBehaviour
 
     IEnumerator Start()
     {
-        Cam = GameObject.FindWithTag("MainCamera").GetComponent<Transform>();
+        Cam = Camera.main.transform;
         target = GameObject.FindWithTag("Player").GetComponent<Transform>();
 
         MainCam = Camera.main;
-        ZoomCam = GameObject.FindWithTag("Player").transform.GetChild(3).GetChild(1).GetComponent<Camera>();
+        ZoomCam = target.GetChild(3).GetChild(1).GetComponent<Camera>();
         CamOneOn();
 
         virtualCam = GameObject.Find("Virtual Camera").GetComponent<CinemachineVirtualCamera>();
@@ -51,17 +50,15 @@ public class FollowCam : MonoBehaviour
     private void Update()
     {
         if (target == null) return;
+
         Vector3 castTarget = target.position + (target.up * castOffset);
         Vector3 castDir = (castTarget - virtualCam.transform.position).normalized;
-        RaycastHit hit;
-        if (Physics.Raycast(virtualCam.transform.position, castDir, out hit, Mathf.Infinity))
+
+        if (Physics.Raycast(virtualCam.transform.position, castDir, out RaycastHit hit, Mathf.Infinity))
         {
-            if (!hit.collider.CompareTag("Player"))
-            {
-                Height = Mathf.Lerp(Height, maxHeight, Time.deltaTime);
-            }
-            else
-                Height = Mathf.Lerp(Height, originHeight, Time.deltaTime);
+            Height = !hit.collider.CompareTag("Player") ?
+                Mathf.Lerp(Height, maxHeight, Time.deltaTime) :
+                Mathf.Lerp(Height, originHeight, Time.deltaTime);
         }
     }
 

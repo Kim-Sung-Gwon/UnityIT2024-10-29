@@ -1,5 +1,4 @@
 using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.InputSystem;
 
@@ -20,9 +19,7 @@ public class PlayerMove : MonoBehaviour
     Vector2 mouseDelta;
 
     float gravity = -10f;
-    float mouseX;
     float rotSpeed = 7f;
-    float fallMultiplier = 2.5f;
 
     float currentSpeed;
     float moveSpeed = 7f;
@@ -33,7 +30,7 @@ public class PlayerMove : MonoBehaviour
     void Awake()
     {
         playerInput = GetComponent<PlayerInput>();
-        tr = GetComponent<Transform>();
+        tr = transform;
         cc = GetComponent<CharacterController>();
         playerAnimator = GetComponent<PlayerAnimator>();
         fireCtrl = GetComponent<FireCtrl>();
@@ -49,13 +46,8 @@ public class PlayerMove : MonoBehaviour
     {
         if (moveDir != Vector3.zero)
         {
-            Vector3 forward = cameraTr.forward;
-            Vector3 right = cameraTr.right;
-
-            forward.y = 0f;
-            right.y = 0f;
-            forward.Normalize();
-            right.Normalize();
+            Vector3 forward = Vector3.ProjectOnPlane(cameraTr.forward, Vector3.up).normalized;
+            Vector3 right = Vector3.ProjectOnPlane(cameraTr.right, Vector3.up).normalized;
 
             Vector3 moveDirection = (forward * moveDir.z + right * moveDir.x).normalized;
             cc.Move(moveDirection * currentSpeed * Time.deltaTime);
@@ -68,8 +60,7 @@ public class PlayerMove : MonoBehaviour
     void OnRotation(InputValue value)
     {
         mouseDelta = value.Get<Vector2>();
-        float mouseX = mouseDelta.x;
-        tr.Rotate(Vector3.up * rotSpeed * mouseX * Time.deltaTime);
+        tr.Rotate(Vector3.up * rotSpeed * mouseDelta.x * Time.deltaTime);
     }
 
     void OnMove(InputValue value)
@@ -114,9 +105,10 @@ public class PlayerMove : MonoBehaviour
 
     void OnZoom()
     {
-        if (F_cam.zoomCam == true)
+        F_cam.zoomCam = !F_cam.zoomCam;
+
+        if (F_cam.zoomCam)
         {
-            F_cam.zoomCam = false;
             F_cam.CamTwoOn();
             uimanager.Zoom_Image.gameObject.SetActive(true);
             currentSpeed = 1;

@@ -1,35 +1,34 @@
-using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
 
 public class CrackDamage : MonoBehaviour
 {
-    [SerializeField] private Transform tr;
-    [SerializeField] private Image Hpbar;
+    private Image Hpbar;
 
     int MaxHp = 500;
     int CurHp;
 
     void Start()
     {
-        tr = GetComponent<Transform>();
         Hpbar = GameObject.Find("UI_Canvas").transform.GetChild(2).GetChild(9).GetComponent<Image>();
         CurHp = MaxHp;
-        Hpbar.color = Color.green;
+        HpCur();
     }
 
     private void OnCollisionEnter(Collision col)
     {
         if (col.gameObject.CompareTag("Bullet"))
         {
-            float damage = col.gameObject.GetComponent<Bullet>().Damage;
-            damage = Random.Range(10, 23);
-            col.gameObject.SetActive(false);
-            CurHp -= (int)damage;
-            HpCur();
-            if (CurHp <= 0)
-                GameSet();
+            Bullet bullet = col.gameObject.GetComponent<Bullet>();
+            if (bullet != null)
+            {
+                int damage = Random.Range(10, 23);
+                CurHp -= damage;
+                HpCur();
+                if (CurHp <= 0)
+                    GameSet();
+                col.gameObject.SetActive(false);
+            }
         }
     }
 
@@ -37,10 +36,9 @@ public class CrackDamage : MonoBehaviour
     {
         CurHp = Mathf.Clamp(CurHp, 0 ,MaxHp);
         Hpbar.fillAmount = (float)CurHp / (float)MaxHp;
-        if (Hpbar.fillAmount <= 0.7f)
-            Hpbar.color = Color.yellow;
-        if (Hpbar.fillAmount <= 0.4f)
-            Hpbar.color = Color.red;
+        Hpbar.color = Hpbar.fillAmount <= 0.7f ? Color.yellow :
+                      Hpbar.fillAmount <= 0.4f ? Color.red :
+                      Color.green;
     }
 
     public void GameSet()

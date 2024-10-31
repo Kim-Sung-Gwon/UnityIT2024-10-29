@@ -1,5 +1,4 @@
 using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
 
@@ -22,38 +21,40 @@ public class PlayerDamage : MonoBehaviour
         playerSound = GetComponent<PlayerSound>();
         CurHp = MaxHp;
         HpImage = GameObject.Find("UI_Canvas").transform.GetChild(2).GetChild(2).GetComponent<Image>();
-        HpImage.color = Color.green;
+        CurHpImage();
     }
 
     private void OnTriggerEnter(Collider other)
     {
         if (other.gameObject.CompareTag("DamageZone"))
         {
-            playerSound.HitSound();
-            CurHp -= 5;
-            CurHpImage();
-            if (CurHp <= 0)
-                PlayerDie();
+            OnPlayerDamage(5);
         }
 
         if (other.gameObject.CompareTag("NecromDamage"))
         {
-            playerSound.HitSound();
-            CurHp -= 15;
-            CurHpImage();
-            if (CurHp <= 0)
-                PlayerDie();
+            OnPlayerDamage(15);
         }
+    }
+
+    void OnPlayerDamage(int damage)
+    {
+        playerSound.HitSound();
+        CurHp -= damage;
+
+        CurHpImage();
+
+        if (CurHp <= 0)
+            PlayerDie();
     }
 
     public void CurHpImage()
     {
         CurHp = Mathf.Clamp(CurHp, 0, MaxHp);
         HpImage.fillAmount = (float)CurHp / (float)MaxHp;
-        if (HpImage.fillAmount <= 0.7f)
-            HpImage.color = Color.yellow;
-        if (HpImage.fillAmount <= 0.4f)
-            HpImage.color = Color.red;
+        HpImage.color = HpImage.fillAmount <= 0.7f ? Color.yellow :
+                        HpImage.fillAmount <= 0.4f ? Color.red :
+                        Color.green;
     }
 
     public void PlayerDie()

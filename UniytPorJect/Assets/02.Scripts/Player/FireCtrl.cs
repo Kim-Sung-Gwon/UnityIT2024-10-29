@@ -1,6 +1,4 @@
 using System.Collections;
-using System.Collections.Generic;
-using Unity.VisualScripting;
 using UnityEngine;
 using UnityEngine.UI;
 
@@ -12,7 +10,6 @@ public class FireCtrl : MonoBehaviour
     public State state { get; private set; }
 
     private Transform firePos;
-    //private GameObject Bullet;
     private Text bulletText;
     private ParticleSystem muzzFalsh;
     private PlayerSound playersound;
@@ -20,14 +17,13 @@ public class FireCtrl : MonoBehaviour
     float LastFireTime;
 
     int CurBullet;
-    public int NowBullet = 25;
-    public int MaxBullet = 100;
+    public int maxBullet = 25;
+    public int totalBullet = 100;
 
     bool isReload = false;
 
     void Start()
     {
-        //Bullet = Resources.Load("Bullet").GetComponent<GameObject>();
         firePos = GameObject.FindGameObjectWithTag("Player").transform.GetChild(3).GetChild(0).
             GetChild(1).GetChild(0).GetChild(0);
 
@@ -36,9 +32,10 @@ public class FireCtrl : MonoBehaviour
 
         playersound = GetComponent<PlayerSound>();
 
-        CurBullet = NowBullet;
+        CurBullet = maxBullet;
         state = State.Ready;
         LastFireTime = 0;
+        BulletUpdata();
     }
 
     private void OnEnable()
@@ -50,7 +47,7 @@ public class FireCtrl : MonoBehaviour
 
     public void Fire()
     {
-        if (state == State.Ready && Time.time >= LastFireTime)
+        if (state == State.Ready && Time.time >= LastFireTime && !isReload)
         {
             LastFireTime = Time.time;
             BulletFire();
@@ -59,10 +56,6 @@ public class FireCtrl : MonoBehaviour
 
     public void BulletFire()
     {
-        if (isReload)
-        {
-            return;
-        }
         var bullet = ObjectPoolingManager.poolingManager.GetBulletPool();
         if (bullet != null && !bullet.activeInHierarchy)
         {
@@ -73,8 +66,10 @@ public class FireCtrl : MonoBehaviour
             playersound.FireSound();
             Invoke("MuzzFalshFire", 0.1f);
         }
+
         --CurBullet;
         BulletUpdata();
+
         if (CurBullet <= 0)
         {
             state = State.Empty;
@@ -92,14 +87,23 @@ public class FireCtrl : MonoBehaviour
         isReload = true;
         playersound.ReloadSound();
         GetComponent<PlayerAnimator>().ReloadAnimation();
+
         yield return new WaitForSeconds(playersound.reloadClip.length + 0.3f);
-        int bulletRemain = NowBullet - CurBullet;
-        if (MaxBullet <= bulletRemain)
-        {
-            bulletRemain = MaxBullet;
-        }
-        CurBullet += bulletRemain;
-        MaxBullet -= bulletRemain;
+
+        #region 최적화 전 코드
+        //int bulletRemain = maxBullet - CurBullet;
+        //if (totalBullet <= bulletRemain)
+        //{
+        //    bulletRemain = totalBullet;
+        //}
+        //CurBullet += bulletRemain;
+        //totalBullet -= bulletRemain;
+        #endregion
+
+        int bulletsToReload = Mathf.Min(maxBullet - CurBullet, totalBullet);
+        CurBullet += bulletsToReload;
+        totalBullet -= bulletsToReload;
+
         isReload = false;
         state = State.Ready;
         BulletUpdata();
@@ -107,7 +111,7 @@ public class FireCtrl : MonoBehaviour
 
     public bool ReloadPlay()
     {
-        if (state == State.Reload || MaxBullet <= 0 || CurBullet >= NowBullet)
+        if (state == State.Reload || totalBullet <= 0 || CurBullet >= maxBullet)
         {
             return false;
         }
@@ -117,6 +121,6 @@ public class FireCtrl : MonoBehaviour
 
     public void BulletUpdata()
     {
-        bulletText.text = string.Format($"{CurBullet} / {MaxBullet}");
+        bulletText.text = string.Format($"{CurBullet} / {totalBullet}");
     }
 }

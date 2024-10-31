@@ -1,5 +1,4 @@
 using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
 
@@ -25,6 +24,7 @@ public class NecromanDamage : MonoBehaviour
         Tr = GetComponent<Transform>();
         Hpbar = Tr.Find("NecremCanvas").transform.GetChild(1).GetComponent<Image>();
         damageText = Tr.Find("NecremCanvas").transform.GetChild(2).GetComponent<Text>();
+        damageText.gameObject.SetActive(false);
         CurHp = MaxHp;
         Hpbar.color = Color.green;
         if (Hpbar.fillAmount == 0)
@@ -35,16 +35,23 @@ public class NecromanDamage : MonoBehaviour
     {
         if (col.gameObject.CompareTag("Bullet"))
         {
-            ShowBlood(col);
-            float damage = col.gameObject.GetComponent<Bullet>().Damage;
-            damage = Random.Range(15, 30);
-            StartCoroutine(OndamagetText(damage));
             col.gameObject.SetActive(false);
-            CurHp -= (int)damage;
-            NecromHpBar();
-            if (CurHp <= 0)
-                Die();
+            ShowBlood(col);
+            float _damage = col.gameObject.GetComponent<Bullet>().Damage;
+            _damage = Random.Range(15, 30);
+            StartCoroutine(OndamagetText(_damage));
+            EnemyDamage((int)_damage);
         }
+    }
+
+    void EnemyDamage(int damage)
+    {
+        CurHp = Mathf.Clamp(CurHp, 0, MaxHp);
+        Hpbar.fillAmount = (float)CurHp / (float)MaxHp;
+        CurHp -= damage;
+        Hpbar.color = Hpbar.fillAmount <= 0.7f ? Color.yellow :
+                      Hpbar.fillAmount <= 0.4f ? Color.red :
+                      Color.green;
     }
 
     IEnumerator OndamagetText(float damage)
@@ -58,20 +65,9 @@ public class NecromanDamage : MonoBehaviour
     private void ShowBlood(Collision col)
     {
         Vector3 pos = col.contacts[0].point;
-        Vector3 _normal = col.contacts[0].normal;
-        Quaternion rot = Quaternion.FromToRotation(Vector3.forward, _normal);
+        Quaternion rot = Quaternion.LookRotation(col.contacts[0].normal);
         GameObject blood = Instantiate(BloodEffect, pos, rot);
         Destroy(blood, 0.5f);
-    }
-
-    private void NecromHpBar()
-    {
-        CurHp = Mathf.Clamp(CurHp, 0, MaxHp);
-        Hpbar.fillAmount = (float)CurHp / (float)MaxHp;
-        if (Hpbar.fillAmount <= 0.7f)
-            Hpbar.color = Color.yellow;
-        if (Hpbar.fillAmount <= 0.4f)
-            Hpbar.color = Color.red;
     }
 
     void Die()

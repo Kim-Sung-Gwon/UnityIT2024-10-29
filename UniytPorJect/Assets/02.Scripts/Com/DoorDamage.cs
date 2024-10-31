@@ -1,5 +1,3 @@
-using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
 
@@ -22,29 +20,30 @@ public class DoorDamage : MonoBehaviour
         if (other.gameObject.CompareTag("Enemy"))
         {
             other.gameObject.SetActive(false);
-            CurHp -= 10;
-            DoorCurHpBar();
-            if (CurHp <= 0)
-                GameManager.G_Manager.GameOver();
+            ApplyDamage(10);
         }
 
         if (other.gameObject.CompareTag("Necroman"))
         {
             other.gameObject.SetActive(false);
-            CurHp -= 15;
-            DoorCurHpBar();
-            if (CurHp <= 0)
-                GameManager.G_Manager.GameOver();
+            ApplyDamage(15);
         }
+    }
+
+    void ApplyDamage(int damage)
+    {
+        CurHp -= damage;
+        DoorCurHpBar();
+        if (CurHp <= 0)
+            GameManager.G_Manager.GameOver();
     }
 
     void DoorCurHpBar()
     {
         CurHp = Mathf.Clamp(CurHp, 0, MaxHp);
         Hpbar.fillAmount = (float)CurHp / (float)MaxHp;
-        if (Hpbar.fillAmount <= 0.7f)
-            Hpbar.color = Color.yellow;
-        if (Hpbar.fillAmount <= 0.4f)
-            Hpbar.color = Color.red;
+        Hpbar.color = Hpbar.fillAmount <= 0.7f ? Color.yellow :
+                      Hpbar.fillAmount <= 0.4f ? Color.red :
+                      Color.green;
     }
 }

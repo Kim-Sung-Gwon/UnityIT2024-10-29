@@ -1,5 +1,4 @@
 using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
 
@@ -11,7 +10,7 @@ public class GolemDamage : MonoBehaviour
     private GameObject BloodEffect;
     private Text damageText;
 
-    public int MaxHp = 120;
+    int MaxHp = 120;
     int CurHp = 0;
 
     private void Start()
@@ -36,16 +35,21 @@ public class GolemDamage : MonoBehaviour
     {
         if (col.gameObject.CompareTag("Bullet"))
         {
+            col.gameObject.SetActive(false);
             ShowBlood(col);
             float _damage = col.gameObject.GetComponent<Bullet>().Damage;
             _damage = Random.Range(10, 25);
             StartCoroutine(OndamagetText(_damage));
-            col.gameObject.SetActive(false);
-            CurHp -= (int)_damage;
-            EnemyCurHp();
-            if (CurHp <= 0)
-                Die();
+            EnemyDamage((int)_damage);
         }
+    }
+
+    void EnemyDamage(int damage)
+    {
+        EnemyCurHp();
+        CurHp -= damage;
+        if (CurHp <= 0)
+            Die();
     }
 
     IEnumerator OndamagetText(float damage)
@@ -59,8 +63,7 @@ public class GolemDamage : MonoBehaviour
     private void ShowBlood(Collision col)
     {
         Vector3 pos = col.contacts[0].point;
-        Vector3 _normal = col.contacts[0].normal;
-        Quaternion rot = Quaternion.FromToRotation(-Vector3.forward, _normal);
+        Quaternion rot = Quaternion.LookRotation(col.contacts[0].normal);
         GameObject blood = Instantiate(BloodEffect, pos, rot);
         Destroy(blood, 0.5f);
     }
@@ -69,10 +72,9 @@ public class GolemDamage : MonoBehaviour
     {
         CurHp = Mathf.Clamp(CurHp, 0, MaxHp);
         GolemHpBar.fillAmount = (float)CurHp / (float)MaxHp;
-        if (GolemHpBar.fillAmount <= 0.7f)
-            GolemHpBar.color = Color.yellow;
-        if (GolemHpBar.fillAmount <= 0.4f)
-            GolemHpBar.color = Color.red;
+        GolemHpBar.color = GolemHpBar.fillAmount <= 0.7f ? Color.yellow :
+                           GolemHpBar.fillAmount <= 0.4f ? Color.red :
+                           Color.green;
     }
 
     void Die()

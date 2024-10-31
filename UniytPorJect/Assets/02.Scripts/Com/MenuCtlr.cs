@@ -1,5 +1,3 @@
-using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
 
 public class MenuCtlr : MonoBehaviour
@@ -26,45 +24,33 @@ public class MenuCtlr : MonoBehaviour
 
     private void Start()
     {
-        F_Cam = GameObject.Find("Main Camera").GetComponent<FollowCam>();
+        F_Cam = Camera.main.GetComponent<FollowCam>();
     }
 
     public void Pause()
     {
         isPause = !isPause;
-        if (PauseCavers.gameObject.activeSelf == false)
+        if (!PauseCavers.gameObject.activeSelf)
         {
-            if (!PauseMenu.gameObject.activeInHierarchy)
-            {
-                PauseMenu.gameObject.SetActive(true);
-                SoundMenu.gameObject.SetActive(false);
-            }
-            PauseCavers.gameObject.SetActive(true);
-            player.gameObject.SetActive(false);
+            PauseMenu.gameObject.SetActive(true);
+            SoundMenu.gameObject.SetActive(false);
             F_Cam.CamOneOn();
             Time.timeScale = 0f;
+
+            PauseCavers.gameObject.SetActive(true);
+            player.gameObject.SetActive(false);
         }
     }
 
     public void Sounds(bool isOpen)
     {
-        if (isOpen)
-        {
-            SoundMenu.gameObject.SetActive(isOpen);
-            PauseMenu.gameObject.SetActive(false);
-        }
-        else
-        {
-            SoundMenu.gameObject.SetActive(false);
-            PauseMenu.gameObject.SetActive(true);
-        }
+        SoundMenu.gameObject.SetActive(isOpen);
+        PauseMenu.gameObject.SetActive(!isOpen);
     }
 
     public void Resume()
     {
-        SoundMenu.gameObject.SetActive(false);
         PauseCavers.gameObject.SetActive(false);
-        PauseMenu.gameObject.SetActive(true);
         player.gameObject.SetActive(true);
         Time.timeScale = 1f;
         Cursor.visible = false;

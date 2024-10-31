@@ -1,5 +1,4 @@
 using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
 
 public class BulletPack : MonoBehaviour, IIitem
@@ -8,11 +7,12 @@ public class BulletPack : MonoBehaviour, IIitem
 
     private void OnEnable()
     {
-        Invoke("BulletPakcDisable", 4);
+        StartCoroutine(BulletPakcDisable(4f));
     }
 
-    private void BulletPakcDisable()
+    IEnumerator BulletPakcDisable(float delay)
     {
+        yield return new WaitForSeconds(delay);
         this.gameObject.SetActive(false);
     }
 
@@ -22,8 +22,8 @@ public class BulletPack : MonoBehaviour, IIitem
         FireCtrl fireCtrl = target.GetComponent<FireCtrl>();
         if (fireCtrl != null)
         {
-            fireCtrl.MaxBullet += bullet;
+            fireCtrl.totalBullet += bullet;
+            this.gameObject.SetActive(false);
         }
-        this.gameObject.SetActive(false);
     }
 }

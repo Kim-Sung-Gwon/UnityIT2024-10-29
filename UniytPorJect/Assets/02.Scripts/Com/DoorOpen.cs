@@ -1,5 +1,4 @@
 using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
 
 public class DoorOpen : MonoBehaviour
@@ -8,11 +7,14 @@ public class DoorOpen : MonoBehaviour
     private bool isOpen;
     public bool IsOpen
     {
-        get { return isOpen; }
+        get => isOpen;
         set
         {
-            isOpen = value;
-            animator.SetBool(OpenClos, value);
+            if (isOpen != value)
+            {
+                isOpen = value;
+                animator.SetBool(OpenClos, value);
+            }
         }
     }
 
@@ -25,12 +27,9 @@ public class DoorOpen : MonoBehaviour
 
     private void OnTriggerEnter(Collider other)
     {
-        if (IsOpen == false)
+        if (!IsOpen && other.CompareTag("Player"))
         {
-            if (other.CompareTag("Player"))
-            {
-                IsOpen = true;
-            }
+            IsOpen = true;
         }
         StartCoroutine(DoorClose());
     }

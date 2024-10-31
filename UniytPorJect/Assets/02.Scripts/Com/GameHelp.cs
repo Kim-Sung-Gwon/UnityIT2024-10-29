@@ -1,5 +1,3 @@
-using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
 
 public class GameHelp : MonoBehaviour
@@ -23,50 +21,35 @@ public class GameHelp : MonoBehaviour
     {
         isPause = !isPause;
 
-        if (HelpCanves.gameObject.activeSelf == false)
+        if (!HelpCanves.gameObject.activeSelf)
         {
-            if (!HelpCanves.gameObject.activeInHierarchy)
-            {
-                MainPanel.gameObject.SetActive(true);
-                NextPanel.gameObject.SetActive(false);
-            }
+            LoadMainPanel();
             HelpCanves.gameObject.SetActive(true);
         }
     }
 
     public void Nextpanel(bool isOpen)
     {
-        if (isOpen)
-        {
-            NextPanel.gameObject.SetActive(isOpen);
-            MainPanel.gameObject.SetActive(false);
-        }
-        else
-        {
-            NextPanel.gameObject.SetActive(false);
-            MainPanel.gameObject.SetActive(true);
-        }
+        NextPanel.gameObject.SetActive(isOpen);
+        MainPanel.gameObject.SetActive(!isOpen);
     }
 
     public void Beforpanel(bool isOpen)
     {
-        if (isOpen)
-        {
-            NextPanel.gameObject.SetActive(false);
-            BeforePanel.gameObject.SetActive(isOpen);
-        }
-        else
-        {
-            NextPanel.gameObject.SetActive(true);
-            BeforePanel.gameObject.SetActive(false);
-        }
+         NextPanel.gameObject.SetActive(!isOpen);
+         BeforePanel.gameObject.SetActive(isOpen);
     }
 
     public void Resume()
     {
+        LoadMainPanel();
+        HelpCanves.gameObject.SetActive(false);
+    }
+
+    private void LoadMainPanel()
+    {
         MainPanel.gameObject.SetActive(true);
         NextPanel.gameObject.SetActive(false);
         BeforePanel.gameObject.SetActive(false);
-        HelpCanves.gameObject.SetActive(false);
     }
 }

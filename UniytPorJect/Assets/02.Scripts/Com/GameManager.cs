@@ -1,8 +1,4 @@
-using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
-using UnityEngine.EventSystems;
-using UnityEngine.UI;
 
 public class GameManager : MonoBehaviour
 {
@@ -14,9 +10,9 @@ public class GameManager : MonoBehaviour
     float sec;
     int min;
     int hor;
-    public int KillCount;
+    public int KillCount { get; private set; }
 
-    public bool isGameOver = false;
+    public bool isGameOver;
 
     private void Awake()
     {
@@ -27,8 +23,7 @@ public class GameManager : MonoBehaviour
 
         player = GameObject.FindGameObjectWithTag("Player");
         uIManager = GameObject.Find("UIManager").GetComponent<UIManager>();
-        uIManager.KillText.text = string.Format($"<color=#00ff00>KILL Count : </color>" +
-            $"<color=#ff0000>{KillCount}</color>");
+        KillTextUpdate();
 
         // 마우스 커서 관련
         Cursor.visible = false;
@@ -38,14 +33,18 @@ public class GameManager : MonoBehaviour
     public void KillScore()
     {
         ++KillCount;
-       uIManager.KillText.text = string.Format($"<color=#00ff00>KILL Count : </color>" +
-            $"<color=#ff0000>{KillCount}</color>");
+        KillTextUpdate();
+    }
+
+    void KillTextUpdate()
+    {
+        uIManager.KillText.text = $"<color=#00ff00>KILL Count : </color><color=#ff0000>{KillCount}</color>";
     }
 
     public void SetTime()
     {
         sec += Time.deltaTime;
-        uIManager.Timer.text = string.Format($"{hor:D2} : {min:D2} : {(int)sec:D2}");
+
         if (sec > 59f)
         {
             sec = 0;
@@ -56,6 +55,7 @@ public class GameManager : MonoBehaviour
                 hor++;
             }
         }
+        uIManager.Timer.text = $"{hor:D2} : {min:D2} : {(int)sec:D2}";
     }
 
     public void GameOverUI()
@@ -80,6 +80,9 @@ public class GameManager : MonoBehaviour
 
     private void Update()
     {
-        SetTime();
+        if (!isGameOver)
+        {
+            SetTime();
+        }
     }
 }

@@ -1,5 +1,4 @@
 using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.AI;
 
@@ -23,7 +22,6 @@ public class EnemyAI : MonoBehaviour
     public float LastAttackTime;
 
     public bool isDie = false;
-    public bool isAttack = false;
 
     void Start()
     {
@@ -49,9 +47,7 @@ public class EnemyAI : MonoBehaviour
 
         while (!isDie)
         {
-            if (state == State.die) yield break;
-
-            float dist = (playerTr.position - EnemyTr.position).magnitude;
+            float dist = Vector3.Distance(playerTr.position, EnemyTr.position);
 
             if (dist <= attackDist)
                 state = State.attack;
@@ -75,10 +71,7 @@ public class EnemyAI : MonoBehaviour
             switch (state)
             {
                 case State.ptrol:
-                    agent.isStopped = false;
-                    enemyMove.patrolling = true;
-                    enemyAni.Enemymove();
-                    isAttack = false;
+                    StartPatrol();
                     break;
 
                 case State.trace:
@@ -96,41 +89,53 @@ public class EnemyAI : MonoBehaviour
         }
     }
 
+    private void StartPatrol()
+    {
+        agent.isStopped = false;
+        enemyMove.patrolling = true;
+        enemyAni.Enemymove();
+    }
+
     private void PlayerTrace()
     {
         enemyMove.traceTarget = playerTr.position;
         agent.isStopped = false;
-        isAttack = false;
         enemyAni.Enemymove();
     }
 
     void Attacking()
     {
-        isAttack = true;
         enemyMove.Stop();
         enemyAni.Enemyattack();
-        isAttack = false;
     }
 
     public void EnemyDie()
     {
         isDie = true;
-        isAttack = false;
         enemyMove.Stop();
         enemyAni.Enemydie();
-        GetComponent<Rigidbody>().isKinematic = true;
-        GetComponent<CapsuleCollider>().enabled = false;
+        Rigidbody rb = GetComponent<Rigidbody>();
+        CapsuleCollider col = GetComponent<CapsuleCollider>();
+
+        if (rb != null) rb.isKinematic = true;
+        if (col != null) col.enabled = false;
+
         gameObject.tag = "Untagged";
         state = State.die;
         StartCoroutine(ObjectPoolPush());
     }
 
-    IEnumerator ObjectPoolPush()
+    IEnumerator ObjectPoolPush() 
     {
         yield return new WaitForSeconds(3.0f);
+
         isDie = false;
-        GetComponent<Rigidbody>().isKinematic = false;
-        GetComponent<CapsuleCollider>().enabled = true;
+        Rigidbody rb = GetComponent<Rigidbody>();
+        CapsuleCollider col = GetComponent<CapsuleCollider>();
+
+        if (rb != null) rb.isKinematic = false;
+        if (col != null) col.enabled = true;
+
         gameObject.tag = "Enemy";
         gameObject.SetActive(false);
         state = State.ptrol;

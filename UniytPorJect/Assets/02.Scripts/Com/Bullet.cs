@@ -1,26 +1,24 @@
 using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
 
 public class Bullet : MonoBehaviour
 {
     public static Bullet P_bullet;
 
-    [SerializeField] private Transform tr;
-    [SerializeField] private Rigidbody rb;
-    [SerializeField] public TrailRenderer Trand;
+    private Rigidbody rb;
+    private TrailRenderer Trand;
     public float moveSpeed = 2500f;
     public float Damage;
 
     void Awake()
     {
-        tr = GetComponent<Transform>();
         rb = GetComponent<Rigidbody>();
         Trand = GetComponent<TrailRenderer>();
     }
 
     private void OnEnable()
     {
+        rb.velocity = Vector3.zero;
         rb.AddForce(transform.forward * moveSpeed);
         StartCoroutine(BulletDisable());
     }
@@ -28,19 +26,23 @@ public class Bullet : MonoBehaviour
     IEnumerator BulletDisable()
     {
         yield return new WaitForSeconds(3);
-        this.gameObject.SetActive(false);
-        Trand.Clear();
+        DisableBullet();
     }
 
     private void OnCollisionEnter(Collision col)
     {
-        this.gameObject.SetActive(false);
+        DisableBullet();
+    }
+
+    void DisableBullet()
+    {
+        Trand.Clear();
+        rb.Sleep();
+        gameObject.SetActive(false);
     }
 
     private void OnDisable()
     {
-        Trand.Clear();
-        tr.rotation = Quaternion.identity;
-        rb.Sleep();
+        transform.rotation = Quaternion.identity;
     }
 }

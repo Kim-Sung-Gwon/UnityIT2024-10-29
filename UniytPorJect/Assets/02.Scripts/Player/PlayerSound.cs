@@ -1,5 +1,3 @@
-using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
 
 public class PlayerSound : MonoBehaviour
@@ -21,7 +19,7 @@ public class PlayerSound : MonoBehaviour
 
     public void FireSound()
     {
-        source.PlayOneShot(fireClip, 1);
+        SoundManager.S_Manager.PlaySound(transform.position, fireClip);
     }
 
     public void ReloadSound()

@@ -1,20 +1,18 @@
-using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
 
 public class HpBarLook : MonoBehaviour
 {
     private Canvas HPbar;
-    private Transform CamTr;
+    private Transform Player;
 
     void Start()
     {
         HPbar = GetComponent<Canvas>();
-        CamTr = GameObject.Find("Main Camera").transform.GetComponent<Transform>();
+        Player = GameObject.FindWithTag("Player").transform.GetComponent<Transform>();
     }
 
     void Update()
     {
-        HPbar.transform.LookAt(CamTr);
+        HPbar.transform.LookAt(Player.position);
     }
 }
