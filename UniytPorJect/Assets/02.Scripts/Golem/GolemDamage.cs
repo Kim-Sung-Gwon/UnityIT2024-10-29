@@ -9,6 +9,7 @@ public class GolemDamage : MonoBehaviour
     private BoxCollider boxCol;
     private Image GolemHpBar;
     private GameObject BloodEffect;
+    private Text damageText;
 
     public int MaxHp = 120;
     int CurHp = 0;
@@ -23,6 +24,8 @@ public class GolemDamage : MonoBehaviour
     {
         tr = GetComponent<Transform>();
         GolemHpBar = tr.Find("GolemCanvas").transform.GetChild(1).GetComponent<Image>();
+        damageText = tr.Find("GolemCanvas").transform.GetChild(2).GetComponent<Text>();
+        damageText.gameObject.SetActive(false);
         GolemHpBar.color = Color.green;
         CurHp = MaxHp;
         if (GolemHpBar.fillAmount == 0)
@@ -34,14 +37,23 @@ public class GolemDamage : MonoBehaviour
         if (col.gameObject.CompareTag("Bullet"))
         {
             ShowBlood(col);
-
-            float damage = col.gameObject.GetComponent<Bullet>().Damage;
+            float _damage = col.gameObject.GetComponent<Bullet>().Damage;
+            _damage = Random.Range(10, 25);
+            StartCoroutine(OndamagetText(_damage));
             col.gameObject.SetActive(false);
-            CurHp -= (int)damage;
+            CurHp -= (int)_damage;
             EnemyCurHp();
             if (CurHp <= 0)
                 Die();
         }
+    }
+
+    IEnumerator OndamagetText(float damage)
+    {
+        damageText.gameObject.SetActive(true);
+        damageText.text = damage.ToString();
+        yield return new WaitForSeconds(0.5f);
+        damageText.gameObject.SetActive(false);
     }
 
     private void ShowBlood(Collision col)

@@ -9,6 +9,7 @@ public class NecromanDamage : MonoBehaviour
     private Image Hpbar;
     private BoxCollider BoxCol;
     private GameObject BloodEffect;
+    private Text damageText;
 
     int MaxHp = 100;
     int CurHp;
@@ -23,6 +24,7 @@ public class NecromanDamage : MonoBehaviour
     {
         Tr = GetComponent<Transform>();
         Hpbar = Tr.Find("NecremCanvas").transform.GetChild(1).GetComponent<Image>();
+        damageText = Tr.Find("NecremCanvas").transform.GetChild(2).GetComponent<Text>();
         CurHp = MaxHp;
         Hpbar.color = Color.green;
         if (Hpbar.fillAmount == 0)
@@ -35,12 +37,22 @@ public class NecromanDamage : MonoBehaviour
         {
             ShowBlood(col);
             float damage = col.gameObject.GetComponent<Bullet>().Damage;
+            damage = Random.Range(15, 30);
+            StartCoroutine(OndamagetText(damage));
             col.gameObject.SetActive(false);
             CurHp -= (int)damage;
             NecromHpBar();
             if (CurHp <= 0)
                 Die();
         }
+    }
+
+    IEnumerator OndamagetText(float damage)
+    {
+        damageText.gameObject.SetActive(true);
+        damageText.text = damage.ToString();
+        yield return new WaitForSeconds(0.5f);
+        damageText.gameObject.SetActive(false);
     }
 
     private void ShowBlood(Collision col)

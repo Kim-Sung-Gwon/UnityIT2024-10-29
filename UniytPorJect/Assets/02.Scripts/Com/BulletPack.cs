@@ -2,7 +2,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class BulletPack : MonoBehaviour, Iitem
+public class BulletPack : MonoBehaviour, IIitem
 {
     public int bullet = 25;
 

@@ -2,7 +2,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public interface IIitem
+public interface IDamage
 {
-    void Use(GameObject target);
+    void OnDamage(GameObject target);
 }

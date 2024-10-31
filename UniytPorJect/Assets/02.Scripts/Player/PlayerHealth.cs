@@ -13,7 +13,7 @@ public class PlayerHealth : MonoBehaviour
 
     private void OnTriggerEnter(Collider other)
     {
-        Iitem item = other.GetComponent<Iitem>();
+        IIitem item = other.GetComponent<IIitem>();
         if (item != null)
         {
             item.Use(gameObject);

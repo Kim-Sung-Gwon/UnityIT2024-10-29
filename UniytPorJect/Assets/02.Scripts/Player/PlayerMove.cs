@@ -14,17 +14,20 @@ public class PlayerMove : MonoBehaviour
     private GameManager gameManager;
     private FollowCam F_cam;
     private UIManager uimanager;
+    private Transform CamRot;
 
     Vector3 moveDir = Vector3.zero;
     Vector2 mouseDelta;
 
-    public float gravity = -10;
-    public float mouseX;
-    public float moveSpeed = 7f;
-    public float runSpeed = 14f;
-    public float rotSpeed = 5f;
-    public float fallMultiplier = 2.5f;
+    float gravity = -10f;
+    float mouseX;
+    float rotSpeed = 7f;
+    float fallMultiplier = 2.5f;
+
     float currentSpeed;
+    float moveSpeed = 7f;
+    float runSpeed = 14f;
+
     bool running;
 
     void Awake()
@@ -36,6 +39,7 @@ public class PlayerMove : MonoBehaviour
         fireCtrl = GetComponent<FireCtrl>();
         gameManager = GameObject.Find("GameManager").GetComponent<GameManager>();
         cameraTr = Camera.main.transform;
+        CamRot = GameObject.FindWithTag("Player").transform.GetChild(3).GetChild(1).GetComponent<Transform>();
         F_cam = GameObject.Find("Main Camera").GetComponent<FollowCam>();
         currentSpeed = moveSpeed;
         uimanager = GameObject.Find("UIManager").GetComponent <UIManager>();
@@ -55,6 +59,8 @@ public class PlayerMove : MonoBehaviour
 
             Vector3 moveDirection = (forward * moveDir.z + right * moveDir.x).normalized;
             cc.Move(moveDirection * currentSpeed * Time.deltaTime);
+            
+            // 달리기시 중력 표현
             cc.Move(new Vector3(0, gravity, 0) * Time.deltaTime);
         }
     }
@@ -78,6 +84,8 @@ public class PlayerMove : MonoBehaviour
         ZoomPos();
         playerAnimator.RunAnimation(!playerAnimator.IsRun);
         running = !running;
+
+        // 달리기 중인지 판단하고 그에 따른 속도 변환
         currentSpeed = running ? runSpeed : moveSpeed;
     }
 

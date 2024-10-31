@@ -10,7 +10,7 @@ public class Bullet : MonoBehaviour
     [SerializeField] private Rigidbody rb;
     [SerializeField] public TrailRenderer Trand;
     public float moveSpeed = 2500f;
-    public float Damage = 25f;
+    public float Damage;
 
     void Awake()
     {

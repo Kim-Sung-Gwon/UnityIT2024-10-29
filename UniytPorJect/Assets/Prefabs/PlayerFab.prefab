@@ -230,12 +230,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: be6103114e1813241814f1ff78aef830, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  gravity: -10
-  mouseX: 0
-  moveSpeed: 7
-  runSpeed: 14
-  rotSpeed: 10
-  fallMultiplier: 2.5
 --- !u!114 &7361741902515049401
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -614,7 +608,7 @@ Transform:
   m_GameObject: {fileID: 5714482687780649650}
   serializedVersion: 2
   m_LocalRotation: {x: 0.7070487, y: 0.009061345, z: -0.009061345, w: 0.7070487}
-  m_LocalPosition: {x: 0, y: -0.415, z: 0.071}
+  m_LocalPosition: {x: 0.001, y: -0.463, z: 0.148}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -627,7 +621,7 @@ Camera:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 5714482687780649650}
-  m_Enabled: 1
+  m_Enabled: 0
   serializedVersion: 2
   m_ClearFlags: 1
   m_BackGroundColor: {r: 0.19215687, g: 0.3019608, b: 0.4745098, a: 0}

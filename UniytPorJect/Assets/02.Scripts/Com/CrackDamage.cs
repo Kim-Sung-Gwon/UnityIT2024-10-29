@@ -24,6 +24,7 @@ public class CrackDamage : MonoBehaviour
         if (col.gameObject.CompareTag("Bullet"))
         {
             float damage = col.gameObject.GetComponent<Bullet>().Damage;
+            damage = Random.Range(10, 23);
             col.gameObject.SetActive(false);
             CurHp -= (int)damage;
             HpCur();

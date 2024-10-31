@@ -6,16 +6,19 @@ using Cinemachine;
 public class FollowCam : MonoBehaviour
 {
     private Transform target;
-    [SerializeField] private CinemachineVirtualCamera VirtualCam;
-    [SerializeField] private CinemachineTransposer transposer;
-    [SerializeField] private Transform Cam;
+    private Transform Cam;
 
-    float distance = 7.0f;
-    float movedamping = 10f;
+    private CinemachineVirtualCamera virtualCam;
+    private CinemachineTransposer transposer;
+
+    float Height;
+    float Distance = 7f;
+    float movedamping = 15f;
     float rotdamping = 15f;
+    float targetOffset = 2.0f;
 
-    float MaxHeight = 12f;
-    float castOffset = 1.7f;
+    float maxHeight = 12f;
+    float castOffset = 1.0f;
     float originHeight;
     float heightChangeThreshold = 0.1f;
 
@@ -25,83 +28,57 @@ public class FollowCam : MonoBehaviour
 
     IEnumerator Start()
     {
-        VirtualCam = GameObject.Find("Virtual Camera").GetComponent<CinemachineVirtualCamera>();
         Cam = GameObject.FindWithTag("MainCamera").GetComponent<Transform>();
+        target = GameObject.FindWithTag("Player").GetComponent<Transform>();
 
         MainCam = Camera.main;
         ZoomCam = GameObject.FindWithTag("Player").transform.GetChild(3).GetChild(1).GetComponent<Camera>();
         CamOneOn();
 
-        if (VirtualCam != null)
+        virtualCam = GameObject.Find("Virtual Camera").GetComponent<CinemachineVirtualCamera>();
+        if (virtualCam != null)
         {
-            transposer = VirtualCam.GetCinemachineComponent<CinemachineTransposer>();
+            transposer = virtualCam.GetCinemachineComponent<CinemachineTransposer>();
             if (transposer != null)
             {
                 originHeight = transposer.m_FollowOffset.y;
+                Height = originHeight;
             }
         }
-        target = GameObject.FindWithTag("Player").GetComponent<Transform>();
         yield return new WaitForSeconds(0.5f);
+    }
+
+    private void Update()
+    {
+        if (target == null) return;
+        Vector3 castTarget = target.position + (target.up * castOffset);
+        Vector3 castDir = (castTarget - virtualCam.transform.position).normalized;
+        RaycastHit hit;
+        if (Physics.Raycast(virtualCam.transform.position, castDir, out hit, Mathf.Infinity))
+        {
+            if (!hit.collider.CompareTag("Player"))
+            {
+                Height = Mathf.Lerp(Height, maxHeight, Time.deltaTime);
+            }
+            else
+                Height = Mathf.Lerp(Height, originHeight, Time.deltaTime);
+        }
     }
 
     void LateUpdate()
     {
-        #region 시네머신을 활용하지 않고 카메라 시야에 장해물 감지시 위로 올리는 로직
-        //if (target == null) return;
-        //Vector3 castTarget = target.position + (target.up * castOffset);
-        //Vector3 castDir = (castTarget - Cam.position).normalized;
+        if (transposer == null) return;
 
-        //RaycastHit hit;
-        //if (Physics.Raycast(Cam.position, castDir, out hit))
-        //{
-        //    if (!hit.collider.CompareTag("Player"))
-        //    {
-        //        Height = Mathf.Lerp(Height, MaxHeight, Time.deltaTime);
-        //    }
-        //    else
-        //        Height = Mathf.Lerp(Height, originHeight, Time.deltaTime);
-        //}
+        // transposer를 통해 버추얼 카메라의 높이를 변경
+        Vector3 followOffset = transposer.m_FollowOffset;
+        followOffset.y = Height;
+        transposer.m_FollowOffset = followOffset;
 
-        //var camPos = target.position - (target.forward * distance) + (target.up * Height);
-        //Cam.position = Vector3.Slerp(Cam.position, camPos, movedamping);
-        //Cam.rotation = Quaternion.Slerp(Cam.rotation, target.rotation, rotdamping);
-        //Cam.LookAt(target.position + (target.up * targetOffset));
-        #endregion
+        // 버추얼 카메라가 회전을 하는데 기준이될 대상
+        virtualCam.transform.rotation = Quaternion.Slerp(virtualCam.transform.rotation, target.rotation, Time.deltaTime * rotdamping);
 
-        if (VirtualCam == null || target == null || transposer == null) return;
-        Vector3 castTarget = target.position + (target.up * castOffset);
-        Vector3 castDir = (castTarget - VirtualCam.transform.position).normalized;
-        RaycastHit hit;
-        float targetHeight = originHeight;
-        if (Physics.Raycast(VirtualCam.transform.position, castDir, out hit, distance))
-        {
-            Debug.DrawLine(VirtualCam.transform.position, hit.point, Color.green);
-            if (!hit.collider.CompareTag("Player"))
-            {
-                targetHeight = MaxHeight;
-            }
-            if (hit.collider.CompareTag("DamageZone") || hit.collider.CompareTag("NecromDamage"))
-            {
-                targetHeight = transposer.m_FollowOffset.y;
-            }
-            if (hit.collider.CompareTag("Enemy") || hit.collider.CompareTag("Necroman"))
-            {
-                targetHeight = transposer.m_FollowOffset.y;
-            }
-        }
-        if (Mathf.Abs(transposer.m_FollowOffset.y - targetHeight) >= heightChangeThreshold)
-        {
-            transposer.m_FollowOffset.y = Mathf.Lerp(transposer.m_FollowOffset.y,
-                targetHeight, Time.deltaTime * movedamping);
-        }
-
-        Vector3 desirdePosition = target.position - (target.forward * distance)
-            + (target.up * transposer.m_FollowOffset.y);
-        VirtualCam.transform.position = Vector3.Slerp(VirtualCam.transform.position,
-            desirdePosition, Time.deltaTime * movedamping);
-        VirtualCam.transform.rotation = Quaternion.Slerp(VirtualCam.transform.rotation,
-            target.rotation, Time.deltaTime * rotdamping);
-        VirtualCam.LookAt = target;
+        // 버추얼 카메라가 따라갈 대상
+        virtualCam.LookAt = target;
     }
 
     public void CamOneOn()
