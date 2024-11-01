@@ -8,7 +8,6 @@ public class Bullet : MonoBehaviour
     private Rigidbody rb;
     private TrailRenderer Trand;
     public float moveSpeed = 2500f;
-    public float Damage;
 
     void Awake()
     {

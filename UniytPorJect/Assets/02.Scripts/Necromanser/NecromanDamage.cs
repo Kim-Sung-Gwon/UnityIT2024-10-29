@@ -24,11 +24,15 @@ public class NecromanDamage : MonoBehaviour
         Tr = GetComponent<Transform>();
         Hpbar = Tr.Find("NecremCanvas").transform.GetChild(1).GetComponent<Image>();
         damageText = Tr.Find("NecremCanvas").transform.GetChild(2).GetComponent<Text>();
+        ResetHealth();
+    }
+
+    private void ResetHealth()
+    {
         damageText.gameObject.SetActive(false);
         CurHp = MaxHp;
+        Hpbar.fillAmount = 1;
         Hpbar.color = Color.green;
-        if (Hpbar.fillAmount == 0)
-            Hpbar.fillAmount = 1;
     }
 
     private void OnCollisionEnter(Collision col)
@@ -37,24 +41,31 @@ public class NecromanDamage : MonoBehaviour
         {
             col.gameObject.SetActive(false);
             ShowBlood(col);
-            float _damage = col.gameObject.GetComponent<Bullet>().Damage;
-            _damage = Random.Range(15, 30);
+
+            int _damage = Random.Range(15, 30);
             StartCoroutine(OndamagetText(_damage));
-            EnemyDamage((int)_damage);
+            EnemyDamage(_damage);
         }
     }
 
     void EnemyDamage(int damage)
     {
-        CurHp = Mathf.Clamp(CurHp, 0, MaxHp);
+        CurHpbar(damage);
+
+        if (CurHp <= 0)
+            Die();
+    }
+
+    private void CurHpbar(int damage)
+    {
+        CurHp = Mathf.Clamp(CurHp - damage, 0, MaxHp);
         Hpbar.fillAmount = (float)CurHp / (float)MaxHp;
-        CurHp -= damage;
         Hpbar.color = Hpbar.fillAmount <= 0.7f ? Color.yellow :
                       Hpbar.fillAmount <= 0.4f ? Color.red :
                       Color.green;
     }
 
-    IEnumerator OndamagetText(float damage)
+    IEnumerator OndamagetText(int damage)
     {
         damageText.gameObject.SetActive(true);
         damageText.text = damage.ToString();

@@ -11,8 +11,8 @@ public class CrackDamage : MonoBehaviour
     void Start()
     {
         Hpbar = GameObject.Find("UI_Canvas").transform.GetChild(2).GetChild(9).GetComponent<Image>();
+        Hpbar.color = Color.green;
         CurHp = MaxHp;
-        HpCur();
     }
 
     private void OnCollisionEnter(Collision col)
@@ -22,27 +22,20 @@ public class CrackDamage : MonoBehaviour
             Bullet bullet = col.gameObject.GetComponent<Bullet>();
             if (bullet != null)
             {
-                int damage = Random.Range(10, 23);
-                CurHp -= damage;
-                HpCur();
-                if (CurHp <= 0)
-                    GameSet();
+                HpCur(Random.Range(10, 23));
                 col.gameObject.SetActive(false);
+                if (CurHp <= 0)
+                    GameManager.G_Manager.GameOver();
             }
         }
     }
 
-    void HpCur()
+    void HpCur(int damage)
     {
-        CurHp = Mathf.Clamp(CurHp, 0 ,MaxHp);
+        CurHp = Mathf.Clamp(CurHp - damage, 0 ,MaxHp);
         Hpbar.fillAmount = (float)CurHp / (float)MaxHp;
         Hpbar.color = Hpbar.fillAmount <= 0.7f ? Color.yellow :
                       Hpbar.fillAmount <= 0.4f ? Color.red :
                       Color.green;
-    }
-
-    public void GameSet()
-    {
-        GameManager.G_Manager.GameOver();
     }
 }

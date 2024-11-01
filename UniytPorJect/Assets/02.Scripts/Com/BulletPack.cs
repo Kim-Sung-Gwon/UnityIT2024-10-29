@@ -3,7 +3,7 @@ using UnityEngine;
 
 public class BulletPack : MonoBehaviour, IIitem
 {
-    public int bullet = 25;
+    private int bullet = 25;
 
     private void OnEnable()
     {
@@ -13,17 +13,25 @@ public class BulletPack : MonoBehaviour, IIitem
     IEnumerator BulletPakcDisable(float delay)
     {
         yield return new WaitForSeconds(delay);
-        this.gameObject.SetActive(false);
+        gameObject.SetActive(false);
     }
 
     // 인터 페이스
     public void Use(GameObject target)
     {
-        FireCtrl fireCtrl = target.GetComponent<FireCtrl>();
-        if (fireCtrl != null)
+        if (target.TryGetComponent<FireCtrl>(out FireCtrl fireCtrl))
         {
             fireCtrl.totalBullet += bullet;
-            this.gameObject.SetActive(false);
+            gameObject.SetActive(false);
         }
+
+        #region 최적화 작업전 코드
+        //FireCtrl fireCtrl = target.GetComponent<FireCtrl>();
+        //if (fireCtrl != null)
+        //{
+        //    fireCtrl.totalBullet += bullet;
+        //    this.gameObject.SetActive(false);
+        //}
+        #endregion
     }
 }

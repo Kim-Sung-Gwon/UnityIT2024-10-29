@@ -37,22 +37,31 @@ public class GolemDamage : MonoBehaviour
         {
             col.gameObject.SetActive(false);
             ShowBlood(col);
-            float _damage = col.gameObject.GetComponent<Bullet>().Damage;
-            _damage = Random.Range(10, 25);
+
+            int _damage = Random.Range(10, 25);
             StartCoroutine(OndamagetText(_damage));
-            EnemyDamage((int)_damage);
+            EnemyDamage(_damage);
         }
     }
 
     void EnemyDamage(int damage)
     {
-        EnemyCurHp();
-        CurHp -= damage;
+        EnemyCurHp(damage);
+
         if (CurHp <= 0)
             Die();
     }
 
-    IEnumerator OndamagetText(float damage)
+    private void EnemyCurHp(int damage)
+    {
+        CurHp = Mathf.Clamp(CurHp - damage, 0, MaxHp);
+        GolemHpBar.fillAmount = (float)CurHp / (float)MaxHp;
+        GolemHpBar.color = GolemHpBar.fillAmount <= 0.7f ? Color.yellow :
+                           GolemHpBar.fillAmount <= 0.4f ? Color.red :
+                           Color.green;
+    }
+
+    IEnumerator OndamagetText(int damage)
     {
         damageText.gameObject.SetActive(true);
         damageText.text = damage.ToString();
@@ -66,15 +75,6 @@ public class GolemDamage : MonoBehaviour
         Quaternion rot = Quaternion.LookRotation(col.contacts[0].normal);
         GameObject blood = Instantiate(BloodEffect, pos, rot);
         Destroy(blood, 0.5f);
-    }
-
-    public void EnemyCurHp()
-    {
-        CurHp = Mathf.Clamp(CurHp, 0, MaxHp);
-        GolemHpBar.fillAmount = (float)CurHp / (float)MaxHp;
-        GolemHpBar.color = GolemHpBar.fillAmount <= 0.7f ? Color.yellow :
-                           GolemHpBar.fillAmount <= 0.4f ? Color.red :
-                           Color.green;
     }
 
     void Die()

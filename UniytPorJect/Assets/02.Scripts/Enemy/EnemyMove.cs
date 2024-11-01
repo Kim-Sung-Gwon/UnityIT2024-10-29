@@ -95,10 +95,8 @@ public class EnemyMove : MonoBehaviour
     void RotateTowards(Vector3 velocity)
     {
         if (velocity == Vector3.zero) return;
-        {
-            Quaternion rot = Quaternion.LookRotation(velocity);
-            enemyTr.rotation = Quaternion.Slerp(enemyTr.rotation, rot, Time.deltaTime * damping);
-        }
+        Quaternion rot = Quaternion.LookRotation(velocity);
+        enemyTr.rotation = Quaternion.Slerp(enemyTr.rotation, rot, Time.deltaTime * damping);
     }
 
     void MoveToNextWayPoint()

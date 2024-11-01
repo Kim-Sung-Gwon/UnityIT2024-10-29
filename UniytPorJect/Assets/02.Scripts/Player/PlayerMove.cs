@@ -5,7 +5,6 @@ using UnityEngine.InputSystem;
 public class PlayerMove : MonoBehaviour
 {
     private PlayerInput playerInput;
-    private Transform tr;
     private CharacterController cc;
     private PlayerAnimator playerAnimator;
     private Transform cameraTr;
@@ -20,17 +19,16 @@ public class PlayerMove : MonoBehaviour
 
     float gravity = -10f;
     float rotSpeed = 7f;
-
-    float currentSpeed;
     float moveSpeed = 7f;
     float runSpeed = 14f;
 
-    bool running;
+    [SerializeField] float currentSpeed;
+
+    [SerializeField] bool running;
 
     void Awake()
     {
         playerInput = GetComponent<PlayerInput>();
-        tr = transform;
         cc = GetComponent<CharacterController>();
         playerAnimator = GetComponent<PlayerAnimator>();
         fireCtrl = GetComponent<FireCtrl>();
@@ -38,8 +36,9 @@ public class PlayerMove : MonoBehaviour
         cameraTr = Camera.main.transform;
         CamRot = GameObject.FindWithTag("Player").transform.GetChild(3).GetChild(1).GetComponent<Transform>();
         F_cam = GameObject.Find("Main Camera").GetComponent<FollowCam>();
-        currentSpeed = moveSpeed;
         uimanager = GameObject.Find("UIManager").GetComponent <UIManager>();
+
+        currentSpeed = moveSpeed;
     }
 
     void FixedUpdate()
@@ -60,7 +59,7 @@ public class PlayerMove : MonoBehaviour
     void OnRotation(InputValue value)
     {
         mouseDelta = value.Get<Vector2>();
-        tr.Rotate(Vector3.up * rotSpeed * mouseDelta.x * Time.deltaTime);
+        transform.Rotate(Vector3.up * rotSpeed * mouseDelta.x * Time.deltaTime);
     }
 
     void OnMove(InputValue value)
@@ -94,7 +93,6 @@ public class PlayerMove : MonoBehaviour
     public void OnFire()
     {
         StartCoroutine(FireClick());
-        Cursor.visible = false;
     }
 
     IEnumerator FireClick()
@@ -122,7 +120,6 @@ public class PlayerMove : MonoBehaviour
 
     private void ZoomPos()
     {
-        F_cam.zoomCam = true;
         F_cam.CamOneOn();
         uimanager.Zoom_Image.gameObject.SetActive(false);
         currentSpeed = moveSpeed;

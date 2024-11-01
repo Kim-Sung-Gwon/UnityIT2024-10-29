@@ -15,7 +15,6 @@ public class FireCtrl : MonoBehaviour
     private PlayerSound playersound;
 
     float LastFireTime;
-
     int CurBullet;
     public int maxBullet = 25;
     public int totalBullet = 100;
@@ -24,12 +23,8 @@ public class FireCtrl : MonoBehaviour
 
     void Start()
     {
-        firePos = GameObject.FindGameObjectWithTag("Player").transform.GetChild(3).GetChild(0).
-            GetChild(1).GetChild(0).GetChild(0);
-
-        bulletText = GameObject.Find("UI_Canvas").transform.GetChild(2).GetChild(3).
-            GetChild(0).GetComponent<Text>();
-
+        firePos = GameObject.FindGameObjectWithTag("Player").transform.GetChild(3).GetChild(0).GetChild(1).GetChild(0).GetChild(0);
+        bulletText = GameObject.Find("UI_Canvas").transform.GetChild(2).GetChild(3).GetChild(0).GetComponent<Text>();
         playersound = GetComponent<PlayerSound>();
 
         CurBullet = maxBullet;
@@ -40,8 +35,7 @@ public class FireCtrl : MonoBehaviour
 
     private void OnEnable()
     {
-        muzzFalsh = transform.GetChild(3).GetChild(0).GetChild(1).GetChild(0).
-            GetChild(0).GetChild(0).GetComponent<ParticleSystem>();
+        muzzFalsh = transform.GetChild(3).GetChild(0).GetChild(1).GetChild(0).GetChild(0).GetChild(0).GetComponent<ParticleSystem>();
         muzzFalsh.Stop();
     }
 
@@ -52,6 +46,7 @@ public class FireCtrl : MonoBehaviour
             LastFireTime = Time.time;
             BulletFire();
         }
+        Cursor.visible = false;
     }
 
     public void BulletFire()
@@ -88,7 +83,7 @@ public class FireCtrl : MonoBehaviour
         playersound.ReloadSound();
         GetComponent<PlayerAnimator>().ReloadAnimation();
 
-        yield return new WaitForSeconds(playersound.reloadClip.length + 0.3f);
+        yield return new WaitForSeconds(playersound.reloadClip.length + 0.5f);
 
         #region 최적화 전 코드
         //int bulletRemain = maxBullet - CurBullet;

@@ -17,8 +17,9 @@ public class PlayerDamage : MonoBehaviour
     {
         cc = GetComponent<CharacterController>();
         playerAnimator = GetComponent<PlayerAnimator>();
-        gameManager = GameObject.Find("GameManager").GetComponent<GameManager>();
+        gameManager = GameObject.FindObjectOfType<GameManager>();
         playerSound = GetComponent<PlayerSound>();
+
         CurHp = MaxHp;
         HpImage = GameObject.Find("UI_Canvas").transform.GetChild(2).GetChild(2).GetComponent<Image>();
         CurHpImage();
@@ -28,12 +29,12 @@ public class PlayerDamage : MonoBehaviour
     {
         if (other.gameObject.CompareTag("DamageZone"))
         {
-            OnPlayerDamage(5);
+            OnPlayerDamage(Random.Range(5, 13));
         }
 
         if (other.gameObject.CompareTag("NecromDamage"))
         {
-            OnPlayerDamage(15);
+            OnPlayerDamage(Random.Range(15, 24));
         }
     }
 
@@ -41,9 +42,7 @@ public class PlayerDamage : MonoBehaviour
     {
         playerSound.HitSound();
         CurHp -= damage;
-
         CurHpImage();
-
         if (CurHp <= 0)
             PlayerDie();
     }
@@ -52,14 +51,18 @@ public class PlayerDamage : MonoBehaviour
     {
         CurHp = Mathf.Clamp(CurHp, 0, MaxHp);
         HpImage.fillAmount = (float)CurHp / (float)MaxHp;
-        HpImage.color = HpImage.fillAmount <= 0.7f ? Color.yellow :
-                        HpImage.fillAmount <= 0.4f ? Color.red :
-                        Color.green;
+        if (HpImage.fillAmount <= 0.7f)
+            HpImage.color = Color.yellow;
+        else if (HpImage.fillAmount <= 0.4f)
+            HpImage.color = Color.red;
+        else
+            HpImage.color = Color.green;
     }
 
     public void PlayerDie()
     {
         cc.enabled = false;
+        gameObject.tag = "Untagged";
         playerSound.DieSound();
         playerAnimator.DieAnimation();
         StartCoroutine(LodGameOverUi());

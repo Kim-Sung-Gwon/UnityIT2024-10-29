@@ -15,24 +15,22 @@ public class EnemyAI : MonoBehaviour
     private EnemyMove enemyMove;
     private EnemyAnimation enemyAni;
 
-    private WaitForSeconds ws;
+    private WaitForSeconds ws = new WaitForSeconds(0.3f);
 
     public float traceDist = 10.0f;
     public float attackDist = 2f;
-    public float LastAttackTime;
 
     public bool isDie = false;
 
     void Start()
     {
         EnemyTr = GetComponent<Transform>();
-        playerTr = GameObject.FindWithTag("Player").GetComponent<Transform>();
-        if (playerTr != null)
-            playerTr = playerTr.GetComponent<Transform>();
+        playerTr = GameObject.FindWithTag("Player")?.GetComponent<Transform>();
         agent = GetComponent<NavMeshAgent>();
         enemyMove = GetComponent<EnemyMove>();
         enemyAni = GetComponent<EnemyAnimation>();
-        ws = new WaitForSeconds(0.3f);
+
+        if (E_AI == null) E_AI = this;
     }
 
     private void OnEnable()
@@ -114,6 +112,7 @@ public class EnemyAI : MonoBehaviour
         isDie = true;
         enemyMove.Stop();
         enemyAni.Enemydie();
+
         Rigidbody rb = GetComponent<Rigidbody>();
         CapsuleCollider col = GetComponent<CapsuleCollider>();
 

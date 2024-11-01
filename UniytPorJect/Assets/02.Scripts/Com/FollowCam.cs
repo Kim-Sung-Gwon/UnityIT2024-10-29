@@ -5,12 +5,12 @@ using Cinemachine;
 public class FollowCam : MonoBehaviour
 {
     private Transform target;
-    private Transform Cam;
-
     private CinemachineVirtualCamera virtualCam;
     private CinemachineTransposer transposer;
 
     float Height;
+    float originHeight;
+
     const float Distance = 7f;
     const float movedamping = 15f;
     const float rotdamping = 15f;
@@ -19,15 +19,12 @@ public class FollowCam : MonoBehaviour
     const float castOffset = 1.0f;
     const float heightChangeThreshold = 0.1f;
 
-    float originHeight;
-
     public Camera MainCam;
     public Camera ZoomCam;
     public bool zoomCam = true;
 
     IEnumerator Start()
     {
-        Cam = Camera.main.transform;
         target = GameObject.FindWithTag("Player").GetComponent<Transform>();
 
         MainCam = Camera.main;
@@ -35,26 +32,26 @@ public class FollowCam : MonoBehaviour
         CamOneOn();
 
         virtualCam = GameObject.Find("Virtual Camera").GetComponent<CinemachineVirtualCamera>();
-        if (virtualCam != null)
+        transposer = virtualCam.GetCinemachineComponent<CinemachineTransposer>();
+
+        if (transposer != null)
         {
-            transposer = virtualCam.GetCinemachineComponent<CinemachineTransposer>();
-            if (transposer != null)
-            {
-                originHeight = transposer.m_FollowOffset.y;
-                Height = originHeight;
-            }
+            originHeight = transposer.m_FollowOffset.y;
+            Height = originHeight;
         }
+
         yield return new WaitForSeconds(0.5f);
     }
 
     private void Update()
     {
-        if (target == null) return;
+        if (target == null || virtualCam == null) return;
 
+        Vector3 castOrigin = virtualCam.transform.position;
         Vector3 castTarget = target.position + (target.up * castOffset);
-        Vector3 castDir = (castTarget - virtualCam.transform.position).normalized;
+        Vector3 castDir = (castTarget - castOrigin).normalized;
 
-        if (Physics.Raycast(virtualCam.transform.position, castDir, out RaycastHit hit, Mathf.Infinity))
+        if (Physics.Raycast(castOrigin, castDir, out RaycastHit hit, Mathf.Infinity))
         {
             Height = !hit.collider.CompareTag("Player") ?
                 Mathf.Lerp(Height, maxHeight, Time.deltaTime) :
@@ -67,9 +64,7 @@ public class FollowCam : MonoBehaviour
         if (transposer == null) return;
 
         // transposer를 통해 버추얼 카메라의 높이를 변경
-        Vector3 followOffset = transposer.m_FollowOffset;
-        followOffset.y = Height;
-        transposer.m_FollowOffset = followOffset;
+        transposer.m_FollowOffset = new Vector3(transposer.m_FollowOffset.x, Height, transposer.m_FollowOffset.z);
 
         // 버추얼 카메라가 회전을 하는데 기준이될 대상
         virtualCam.transform.rotation = Quaternion.Slerp(virtualCam.transform.rotation, target.rotation, Time.deltaTime * rotdamping);
