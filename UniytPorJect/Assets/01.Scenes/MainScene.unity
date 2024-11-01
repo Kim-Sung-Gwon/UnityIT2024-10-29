@@ -43302,7 +43302,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: cb0057f336cd8f94dbf364e963364419, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  KillCount: 0
   isGameOver: 0
 --- !u!114 &343642173
 MonoBehaviour:
@@ -48505,7 +48504,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!108 &705507994
 Light:
   m_ObjectHideFlags: 0
@@ -58004,8 +58003,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 098474659297e8940a5be19bf26619aa, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  tr: {fileID: 0}
-  Hpbar: {fileID: 0}
 --- !u!64 &1162232756
 MeshCollider:
   m_ObjectHideFlags: 0

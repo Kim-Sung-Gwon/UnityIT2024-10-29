@@ -94,6 +94,7 @@ public class PlayerMove : MonoBehaviour
     public void OnFire()
     {
         StartCoroutine(FireClick());
+        Cursor.visible = false;
     }
 
     IEnumerator FireClick()

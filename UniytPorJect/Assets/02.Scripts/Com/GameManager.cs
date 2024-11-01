@@ -63,8 +63,7 @@ public class GameManager : MonoBehaviour
         uIManager.gameOverUi.gameObject.SetActive(true);
         uIManager.GameMenuPanel.gameObject.SetActive(false);
         uIManager.HpbarPanel.gameObject.SetActive(false);
-        uIManager.PlayTime.text = "<color=#00ff00>Play Time</color>\n"
-            + "<color=#ff0000>" + uIManager.Timer.text + "</color>";
+        uIManager.PlayTime.text = "<color=#00ff00>Play Time</color>\n<color=#ff0000>" + uIManager.Timer.text + "</color>";
         uIManager.EndKill.text = uIManager.KillText.text;
 
         Time.timeScale = 1f;
